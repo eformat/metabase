@@ -1,0 +1,28 @@
+version: '3.5'
+
+services:
+
+  materialize:
+    image: "quay.io/eformat/materialize-pod:latest"
+    command: [
+      "sh", "-c",
+      "/usr/local/bin/materialized -w 2 -D /work/mzdata"
+    ]
+    ports:
+      - "6875:6875"
+    environment:
+      MZ_LOG: pgwire=info #trace
+    hostname: materialize
+    volumes:
+      - /home/mike/mzdata:/work/mzdata:Z
+
+  metabase:
+    image: "docker.io/materialize/metabase:latest"
+    ports:
+      - "3000:3000"
+    environment:
+      JAVA_TIMEZONE: "Australia/Brisbane"
+      MB_DB_FILE: "/metabase-data/metabase.db"
+    hostname: metabase
+    volumes:
+      - /home/mike/metabase-data:/metabase-data:Z
